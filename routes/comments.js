@@ -62,6 +62,31 @@ router.post("/",isLoggedIn, function(req, res) {
     
 });
 
+//COMMENT EDIT ROUTE
+router.get("/:comment_id/edit", function(req, res) {
+    Comment.findById(req.params.comment_id, function(err, foundComment) {
+        if(err) {
+            res.redirect("back");
+        } else {
+            res.render("comments/edit", {campground_id: req.params.id, comment: foundComment});
+        }
+    });
+   
+});
+
+//COMMENT UPDATE
+router.put("/:comment_id", function(req, res) {
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment) {
+        if(err) {
+            res.redirect("back");
+        } else {
+            res.redirect("/campgrounds/" + req.params.id);
+        }
+    });
+});
+
+
+
 /**this is used to make sure user is logged in before
  * they can progress, otherwise send them to login page
  */
