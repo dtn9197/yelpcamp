@@ -4,12 +4,13 @@ var express     = require("express"),
     app         = express(),
     bodyParser  = require("body-parser"),
     mongoose    = require("mongoose"),
-    Campground  = require("./models/campground"),
+    // Campground  = require("./models/campground"),
     passport    = require("passport"),
     LocalStrategy = require("passport-local"),
-    User = require("./models/user"),
-    seedDB      = require("./seeds"),
-    Comment     = require("./models/comment");
+    methodOverride = require("method-override"),
+    User = require("./models/user");
+    // seedDB      = require("./seeds"),
+    // Comment     = require("./models/comment");
 
  //require routes
 var commentRoutes    = require("./routes/comments"),
@@ -19,6 +20,7 @@ var commentRoutes    = require("./routes/comments"),
 //generate data in database
 // seedDB();
 mongoose.connect("mongodb://localhost:27017/yelp_camp", { useUnifiedTopology: true,  useNewUrlParser: true }); //create yelpcamp db inside mongodb
+
 app.use(bodyParser.urlencoded({extended: true}));
 
 //the public directory is used for assets, stylesheets, scripts
@@ -27,6 +29,7 @@ app.use(bodyParser.urlencoded({extended: true}));
  */
 app.use(express.static(__dirname + "/public"));
 app.set("view engine", "ejs");
+app.use(methodOverride("_method"));
 
 //======= PASSPORT CONFIGURATION=============
 app.use(require("express-session")({
