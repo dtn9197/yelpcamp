@@ -24,8 +24,8 @@ router.post("/register", function(req, res) {
     //hashed password in mongodb database
     User.register(newUser, req.body.password, function(err, user) {
         if(err) {
-            console.log(err);
-            return res.render("register")
+            req.flash("error", err.message);
+            res.redirect("register");
         }
 
         /**the authenticate method is the method that logs you in
@@ -33,6 +33,8 @@ router.post("/register", function(req, res) {
          * /the register method above only creates a new user in the database
          */
         passport.authenticate("local")(req, res, function() {
+            //warning error
+            req.flash("success", "Welcome to YelpCamp " + user.username);
             res.redirect("/campgrounds");
         });
     });
@@ -40,6 +42,8 @@ router.post("/register", function(req, res) {
 })
 
 //showlogin form
+//req.flash is the temporary message that lets uers know they
+//need to login
 router.get("/login", function(req, res) {
     res.render("login");
 });
@@ -51,24 +55,15 @@ router.post("/login", passport.authenticate("local",
         successRedirect:"/campgrounds",
         failureRedirect: "/login"
     }), function(req, res) {
+        
     
 });
 
 //logout route
 router.get("/logout", function(req, res) {
     req.logout();
+    req.flash("success", "logged you out");
     res.redirect("/campgrounds");
 })
-//=================
-
-/**this is used to make sure user is logged in before
- * they can progress, otherwise send them to login page
- */
-function isLoggedIn(req, res, next) {
-    if(req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect("/login");
-}
 
 module.exports = router;

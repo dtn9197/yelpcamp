@@ -4,6 +4,7 @@ var express     = require("express"),
     app         = express(),
     bodyParser  = require("body-parser"),
     mongoose    = require("mongoose"),
+    flash       = require("connect-flash"),
     // Campground  = require("./models/campground"),
     passport    = require("passport"),
     LocalStrategy = require("passport-local"),
@@ -38,6 +39,7 @@ app.use(require("express-session")({
     saveUninitialize: false
 }))
 
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
@@ -51,10 +53,14 @@ app.use(function(req, res, next) {
      * inside our templates
      */
     res.locals.currentUser = req.user;
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
     //use next() to make it move on to the next function call
     //without next it will just stop
     next();
-});   
+});
+
+
 
 //set the routes
 app.use(indexRoutes);
